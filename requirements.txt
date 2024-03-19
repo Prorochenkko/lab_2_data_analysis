@@ -4,3 +4,4 @@ numpy
 cherrypy
 jinja2
 dataspyre
+requests
