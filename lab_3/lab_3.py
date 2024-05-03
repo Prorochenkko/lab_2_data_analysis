@@ -1,9 +1,4 @@
-import pandas as pd
 from spyre import server
-
-import datetime
-import os
-import urllib
 import matplotlib.pyplot as plt
 import pandas as pd
 import glob
@@ -45,7 +40,7 @@ reg_id_name = {
 
 
 class SimpleApp(server.App):
-    title = "Lab 3 NEW"
+    title = "Lab 3"
 
     inputs = [
         {
@@ -101,29 +96,26 @@ class SimpleApp(server.App):
         return df2
 
     def getPlot(self, params):
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 12))
+        fig, ax = plt.subplots(figsize=(16, 8))
         fig.tight_layout(pad=4)
-        df1 = self.getData(params).set_index('Date')
-        plt_obj = df1.plot(ax=ax1, title='plot 1', grid=True)
 
         parameter = params["parameter"]
-        print(parameter)
         region_id = int(params["region"])
         weeks_interval = params["weeks_interval"].split('-')
         years = params["years_interval"].split('-')
 
-        plt_obj.set_xlabel("Date")
-        plt_obj.set_ylabel(parameter)
-        legend_y = []
+        legend_years = []
         for year in range(int(years[0]), int(years[1]) + 1):
-            df2_year = df[(df['Year'] == str(year)) &
-                          (df['Week'].between(int(weeks_interval[0]), int(weeks_interval[1]))) &
-                          (df['region_id'] == region_id)][['Week', parameter]].set_index('Week')
-            legend_y.append(year)
-            plt_obj = df2_year.plot(ax=ax2, label=str(year), grid=True)
-        plt_obj.set_ylabel(parameter)
-        ax2.legend(legend_y, title='Year', bbox_to_anchor=(1.05, 1), loc='upper left')
-        fig = plt_obj.get_figure()
+            df_year = df[(df['Year'] == str(year)) &
+                         (df['Week'].between(int(weeks_interval[0]), int(weeks_interval[1]))) &
+                         (df['region_id'] == region_id)][['Week', parameter]].set_index('Week')
+            df_year.plot(ax=ax, label=str(year), grid=True)
+            legend_years.append(year)
+
+        ax.set_xlabel("Weeks")
+        ax.set_ylabel(parameter)
+        ax.legend(legend_years, title='Year', bbox_to_anchor=(1.05, 1), loc='upper left')
+
         return fig
 
 
