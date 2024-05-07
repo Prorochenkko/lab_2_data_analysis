@@ -1,0 +1,5 @@
+# created by virtualenv automatically
+venv
+.idea/
+lab_4/cars.data
+*.csv

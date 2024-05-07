@@ -86,14 +86,13 @@ class SimpleApp(server.App):
         print(parameter)
         region_id = int(params["region"])
         years = params["years_interval"].split('-')
+        weeks_interval = params["weeks_interval"].split('-')
 
-        df2 = df[(df["Year"].between(years[0], years[1])) &
-                 (df['region_id'] == region_id)][["Year", "Week", parameter]]
+        df_year = df[(df['Year'].astype(int).between(int(years[0]), int(years[1]))) &
+                     (df['Week'].between(int(weeks_interval[0]), int(weeks_interval[1]))) &
+                     (df['region_id'] == region_id)][['Week', parameter]].set_index('Week')
 
-        df2['Date'] = pd.to_datetime(df2['Year'].astype(str) + '-' + df2['Week'].astype(str) + "-1", format='%Y-%W-%w')
-        df2 = df2.drop(['Year', 'Week'], axis=1)
-
-        return df2
+        return df_year
 
     def getPlot(self, params):
         fig, ax = plt.subplots(figsize=(16, 8))
